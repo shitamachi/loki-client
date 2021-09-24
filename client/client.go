@@ -178,7 +178,7 @@ func New(reg prometheus.Registerer, cfg Config, logger zap.Logger) (Client, erro
 		return nil, err
 	}
 
-	c.client, err = config.NewClientFromConfig(cfg.Client, "promtail", false, false)
+	c.client, err = config.NewClientFromConfig(cfg.Client, "promtail")
 	if err != nil {
 		return nil, err
 	}
