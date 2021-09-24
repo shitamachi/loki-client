@@ -1,4 +1,4 @@
-module loki-client
+module github.com/shitamachi/loki-client
 
 go 1.16
 

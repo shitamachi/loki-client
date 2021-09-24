@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/prometheus/common/model"
-	"loki-client/logproto"
+	"github.com/shitamachi/loki-client/logproto"
 	"sync"
 )
 

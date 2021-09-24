@@ -1,8 +1,8 @@
 package main
 
 import (
-	"loki-client/api"
-	"loki-client/logproto"
+	"github.com/shitamachi/loki-client/api"
+	"github.com/shitamachi/loki-client/logproto"
 	"time"
 
 	"github.com/gogo/protobuf/proto"

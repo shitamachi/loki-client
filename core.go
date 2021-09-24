@@ -5,10 +5,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/config"
 	"github.com/prometheus/common/model"
+	"github.com/shitamachi/loki-client/api"
+	"github.com/shitamachi/loki-client/logproto"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"loki-client/api"
-	"loki-client/logproto"
 	"net/url"
 	"time"
 )
