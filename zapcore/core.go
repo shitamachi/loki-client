@@ -1,4 +1,4 @@
-package main
+package zapcore
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"github.com/prometheus/common/config"
 	"github.com/prometheus/common/model"
 	"github.com/shitamachi/loki-client/api"
+	client2 "github.com/shitamachi/loki-client/client"
 	"github.com/shitamachi/loki-client/logproto"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -24,7 +25,7 @@ type LokiCoreConfig struct {
 
 type LokiCore struct {
 	config *LokiCoreConfig
-	client Client
+	client client2.Client
 	zapcore.LevelEnabler
 	enc zapcore.Encoder
 }
@@ -37,12 +38,12 @@ func NewLokiCore(cfg *LokiCoreConfig) (*LokiCore, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientCfg := Config{
+	clientCfg := client2.Config{
 		URL:       parse,
 		BatchWait: cfg.BatchWait,
 		BatchSize: cfg.BatchSize,
 		Client:    config.HTTPClientConfig{},
-		BackoffConfig: BackoffConfig{
+		BackoffConfig: client2.BackoffConfig{
 			MinBackoff: 100 * time.Millisecond,
 			MaxBackoff: 10 * time.Second,
 			MaxRetries: 10,
@@ -56,7 +57,7 @@ func NewLokiCore(cfg *LokiCoreConfig) (*LokiCore, error) {
 	if err != nil {
 		return nil, err
 	}
-	client, err := New(prometheus.DefaultRegisterer, clientCfg, *logger)
+	client, err := client2.New(prometheus.DefaultRegisterer, clientCfg, *logger)
 	if err != nil {
 		return nil, err
 	}
