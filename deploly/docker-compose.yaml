@@ -1,0 +1,24 @@
+version: "3.9"
+
+networks:
+  loki:
+
+services:
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - loki
+
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+      - "7946:7946"
+    networks:
+      - loki
+    restart: on-failure
