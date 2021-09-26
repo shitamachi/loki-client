@@ -358,9 +358,9 @@ func (c *client) send(ctx context.Context, tenantID string, buf []byte) (int, er
 		return -1, err
 	}
 	if resp != nil {
-		fmt.Printf("send to loki resp: %v\n", resp)
+		c.logger.Debug("send to loki resp", zap.Any("resp", resp))
 	} else {
-		fmt.Printf("send to loki resp is nil\n")
+		c.logger.Debug("send to loki resp is nil")
 	}
 
 	//defer helpers.LogError("closing response body", resp.Body.Close)
