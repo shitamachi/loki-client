@@ -83,7 +83,7 @@ func (c *LokiCoreConfig) Default() {
 func (c *LokiCore) With(fields []zapcore.Field) zapcore.Core {
 	clone := c.clone()
 	for i := range fields {
-		fields[i].AddTo(c.enc)
+		fields[i].AddTo(clone.enc)
 	}
 	return clone
 }
