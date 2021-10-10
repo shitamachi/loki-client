@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"math/rand"
+	"sync"
 	"testing"
 	"time"
 )
@@ -107,4 +108,50 @@ func TestMultipleWrite(t *testing.T) {
 	}()
 
 	time.Sleep(15 * time.Second)
+}
+
+func TestBufferedClientWrite(t *testing.T) {
+	lokiCore, err := NewLokiCore(&LokiCoreConfig{
+		URL:       "http://127.0.0.1:3100/loki/api/v1/push",
+		SendLevel: 0,
+		BatchWait: 3 * time.Second,
+		BatchSize: 5,
+		TenantID:  "test-m-1",
+		ExternalLabels: map[model.LabelName]model.LabelValue{
+			"source":   "test",
+			"instance": "test-m-1",
+		},
+		BufferedClient: true,
+	})
+	if err != nil {
+		t.Error(err)
+	}
+
+	log, err := zap.NewDevelopment()
+	if err != nil {
+		t.Error(err)
+	}
+	log = log.WithOptions(zap.WrapCore(func(core zapcore.Core) zapcore.Core {
+		return zapcore.NewTee(core, lokiCore)
+	}))
+
+	var wg sync.WaitGroup
+	for i := 0; i < 1000; i++ {
+		wg.Add(1)
+		i := i
+		go func() {
+			defer wg.Done()
+
+			fmt.Printf("invoke log %d log\n", i)
+
+			if ce := log.Check(zapcore.InfoLevel, fmt.Sprintf("test log %d", i)); ce != nil {
+				ce.Write(zap.Reflect("time", time.Now()), zap.Int("index", i))
+			}
+		}()
+	}
+
+	wg.Wait()
+
+	time.Sleep(5 * time.Second)
+
 }

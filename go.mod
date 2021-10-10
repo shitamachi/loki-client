@@ -6,6 +6,7 @@ require (
 	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/snappy v0.0.4
+	github.com/joncrlsn/dque v0.0.0-20200702023911-3e80e3146ce5
 	github.com/mitchellh/mapstructure v1.4.2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.0

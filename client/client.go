@@ -137,7 +137,7 @@ type Client interface {
 // Client for pushing logs in snappy-compressed protos over HTTP.
 type client struct {
 	metrics *metrics
-	logger  zap.Logger
+	logger  *zap.Logger
 	cfg     Config
 	client  *http.Client
 	entries chan api.Entry
@@ -153,7 +153,7 @@ type client struct {
 }
 
 // New makes a new Client.
-func New(reg prometheus.Registerer, cfg Config, logger zap.Logger) (Client, error) {
+func New(reg prometheus.Registerer, cfg Config, logger *zap.Logger) (Client, error) {
 	// check url config
 	if cfg.URL == nil {
 		return nil, errors.New("client needs target URL")
@@ -363,7 +363,6 @@ func (c *client) send(ctx context.Context, tenantID string, buf []byte) (int, er
 		c.logger.Debug("send to loki resp is nil")
 	}
 
-	//defer helpers.LogError("closing response body", resp.Body.Close)
 	defer func() {
 		err = resp.Body.Close()
 		if err != nil {

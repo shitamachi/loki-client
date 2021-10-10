@@ -21,6 +21,7 @@ type LokiCoreConfig struct {
 	BatchSize      int
 	TenantID       string
 	ExternalLabels model.LabelSet
+	BufferedClient bool
 }
 
 type LokiCore struct {
@@ -31,6 +32,8 @@ type LokiCore struct {
 }
 
 func NewLokiCore(cfg *LokiCoreConfig) (*LokiCore, error) {
+	var client client2.Client
+
 	if cfg == nil {
 		cfg = &LokiCoreConfig{}
 	}
@@ -57,7 +60,18 @@ func NewLokiCore(cfg *LokiCoreConfig) (*LokiCore, error) {
 	if err != nil {
 		return nil, err
 	}
-	client, err := client2.New(prometheus.DefaultRegisterer, clientCfg, *logger)
+
+	if cfg.BufferedClient {
+		client, err = client2.NewDqueClient(&client2.BufferedClientConfig{
+			DqueConfig:   nil,
+			ClientConfig: clientCfg,
+		}, logger)
+	} else {
+		client, err = client2.New(prometheus.DefaultRegisterer, clientCfg, logger)
+		if err != nil {
+			return nil, err
+		}
+	}
 	if err != nil {
 		return nil, err
 	}

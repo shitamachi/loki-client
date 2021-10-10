@@ -22,3 +22,6 @@ vendor/
 
 # build output
 bin/
+
+# tmp dirs
+tmp/
