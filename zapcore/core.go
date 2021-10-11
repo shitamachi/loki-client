@@ -22,6 +22,7 @@ type LokiCoreConfig struct {
 	TenantID       string
 	ExternalLabels model.LabelSet
 	BufferedClient bool
+	BufferedConfig *client2.DqueConfig
 }
 
 type LokiCore struct {
@@ -63,7 +64,7 @@ func NewLokiCore(cfg *LokiCoreConfig) (*LokiCore, error) {
 
 	if cfg.BufferedClient {
 		client, err = client2.NewDqueClient(&client2.BufferedClientConfig{
-			DqueConfig:   nil,
+			DqueConfig:   cfg.BufferedConfig,
 			ClientConfig: clientCfg,
 		}, logger)
 	} else {

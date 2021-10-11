@@ -14,18 +14,18 @@ import (
 	"github.com/prometheus/common/model"
 )
 
-type BqueConfig struct {
-	queueDir         string
-	queueSegmentSize int
-	queueSync        bool
-	queueName        string
+type DqueConfig struct {
+	QueueDir         string
+	QueueSegmentSize int
+	QueueSync        bool
+	QueueName        string
 }
 
-var defaultDqueConfig = BqueConfig{
-	queueDir:         "./tmp/loki-dque-storage/loki",
-	queueSegmentSize: 500,
-	queueSync:        false,
-	queueName:        "dque",
+var DefaultDqueConfig = DqueConfig{
+	QueueDir:         "./tmp/loki-dque-storage/default",
+	QueueSegmentSize: 500,
+	QueueSync:        false,
+	QueueName:        "dque",
 }
 
 type dqueEntry struct {
@@ -48,7 +48,7 @@ type dqueClient struct {
 }
 
 type BufferedClientConfig struct {
-	DqueConfig   *BqueConfig
+	DqueConfig   *DqueConfig
 	ClientConfig Config
 }
 
@@ -57,24 +57,24 @@ func NewDqueClient(cfg *BufferedClientConfig, logger *zap.Logger) (Client, error
 	var err error
 
 	if cfg.DqueConfig == nil {
-		cfg.DqueConfig = &defaultDqueConfig
+		cfg.DqueConfig = &DefaultDqueConfig
 	}
 
 	q := &dqueClient{
-		logger: logger.With(zap.String("component", "queue"), zap.String("name", cfg.DqueConfig.queueName)),
+		logger: logger.With(zap.String("component", "queue"), zap.String("name", cfg.DqueConfig.QueueName)),
 	}
 
-	err = os.MkdirAll(cfg.DqueConfig.queueDir, os.ModePerm)
+	err = os.MkdirAll(cfg.DqueConfig.QueueDir, os.ModePerm)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create queue directory: %s", err)
 	}
 
-	q.queue, err = dque.NewOrOpen(cfg.DqueConfig.queueName, cfg.DqueConfig.queueDir, cfg.DqueConfig.queueSegmentSize, dqueEntryBuilder)
+	q.queue, err = dque.NewOrOpen(cfg.DqueConfig.QueueName, cfg.DqueConfig.QueueDir, cfg.DqueConfig.QueueSegmentSize, dqueEntryBuilder)
 	if err != nil {
 		return nil, err
 	}
 
-	if !cfg.DqueConfig.queueSync {
+	if !cfg.DqueConfig.QueueSync {
 		_ = q.queue.TurboOn()
 	}
 
