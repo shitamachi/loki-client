@@ -15,10 +15,10 @@ import (
 )
 
 type DqueConfig struct {
-	QueueDir         string
-	QueueSegmentSize int
-	QueueSync        bool
-	QueueName        string
+	QueueDir         string `json:"queue_dir"`
+	QueueSegmentSize int    `json:"queue_segment_size"`
+	QueueSync        bool   `json:"queue_sync"`
+	QueueName        string `json:"queue_name"`
 }
 
 var DefaultDqueConfig = DqueConfig{
