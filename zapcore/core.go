@@ -15,14 +15,14 @@ import (
 )
 
 type LokiCoreConfig struct {
-	URL            string
-	SendLevel      zapcore.Level
-	BatchWait      time.Duration
-	BatchSize      int
-	TenantID       string
-	ExternalLabels model.LabelSet
-	BufferedClient bool
-	BufferedConfig *client2.DqueConfig
+	URL            string              `json:"url"`
+	SendLevel      int8                `json:"send_level"`
+	BatchWait      int64               `json:"batch_wait"`
+	BatchSize      int                 `json:"batch_size"`
+	TenantID       string              `json:"tenant_id"`
+	ExternalLabels model.LabelSet      `json:"external_labels"`
+	BufferedClient bool                `json:"buffered_client"`
+	BufferedConfig *client2.DqueConfig `json:"buffered_config"`
 }
 
 type LokiCore struct {
@@ -44,7 +44,7 @@ func NewLokiCore(cfg *LokiCoreConfig) (*LokiCore, error) {
 	}
 	clientCfg := client2.Config{
 		URL:       parse,
-		BatchWait: cfg.BatchWait,
+		BatchWait: time.Duration(cfg.BatchWait) * time.Millisecond,
 		BatchSize: cfg.BatchSize,
 		Client:    config.HTTPClientConfig{},
 		BackoffConfig: client2.BackoffConfig{
@@ -80,7 +80,7 @@ func NewLokiCore(cfg *LokiCoreConfig) (*LokiCore, error) {
 	return &LokiCore{
 		config:       cfg,
 		client:       client,
-		LevelEnabler: cfg.SendLevel,
+		LevelEnabler: zapcore.Level(cfg.SendLevel),
 		enc:          zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
 	}, nil
 }

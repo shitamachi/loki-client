@@ -15,7 +15,7 @@ func TestLokiCore_Write(t *testing.T) {
 	lokiCore, err := NewLokiCore(&LokiCoreConfig{
 		URL:       "http://127.0.0.1:3100/loki/api/v1/push",
 		SendLevel: 0,
-		BatchWait: 3 * time.Second,
+		BatchWait: 3000,
 		BatchSize: 5,
 		TenantID:  "test-1",
 	})
@@ -30,7 +30,7 @@ func TestLokiCore_Write(t *testing.T) {
 
 	for i := 0; i < 100; i++ {
 		t.Logf("invoke %d log", i)
-		randInt := rand.Intn(3)
+		randInt := rand.Intn(3000)
 		t.Logf("sleep %d sec", randInt)
 		time.Sleep(time.Duration(randInt) * time.Second)
 
@@ -44,7 +44,7 @@ func TestMultipleWrite(t *testing.T) {
 	lokiCore, err := NewLokiCore(&LokiCoreConfig{
 		URL:       "http://127.0.0.1:3100/loki/api/v1/push",
 		SendLevel: 0,
-		BatchWait: 3 * time.Second,
+		BatchWait: 3000,
 		BatchSize: 5,
 		TenantID:  "test-m-1",
 		ExternalLabels: map[model.LabelName]model.LabelValue{
@@ -59,7 +59,7 @@ func TestMultipleWrite(t *testing.T) {
 	lokiCore2, err := NewLokiCore(&LokiCoreConfig{
 		URL:       "http://127.0.0.1:3100/loki/api/v1/push",
 		SendLevel: 0,
-		BatchWait: 3 * time.Second,
+		BatchWait: 3000,
 		BatchSize: 5,
 		TenantID:  "test-m-2",
 		ExternalLabels: map[model.LabelName]model.LabelValue{
@@ -114,7 +114,7 @@ func TestBufferedClientWrite(t *testing.T) {
 	lokiCore, err := NewLokiCore(&LokiCoreConfig{
 		URL:       "http://127.0.0.1:3100/loki/api/v1/push",
 		SendLevel: 0,
-		BatchWait: 3 * time.Second,
+		BatchWait: 3000,
 		BatchSize: 5,
 		TenantID:  "test-m-1",
 		ExternalLabels: map[model.LabelName]model.LabelValue{
